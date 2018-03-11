@@ -9,7 +9,7 @@ void handleRoot() {
   httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
   httpServer.send(200, "text/html", ""); // Empty content inhibits Content-length header so we have to close the socket ourselves.
   httpServer.sendContent(
-    "<html><head>WaveNet</head><body>"
+    "<html><head><title>WaveNet</title></head><body>"
     "<h1>WaveNet</h1>"
   );
   httpServer.sendContent(
