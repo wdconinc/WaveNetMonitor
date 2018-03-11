@@ -12,8 +12,8 @@
 const char* ap_ssid = "wavenet";
 const char* ap_pass = "wavenet";
 /* Access point network parameters */
-IPAddress ap_ip(192, 168, 4, 1);
-IPAddress ap_netmask(255, 255, 255, 0);
+IPAddress ap_ip(192,168,4,1);
+IPAddress ap_netmask(255,255,255,0);
 /* mDNS hostname */
 const char* mdns_hostname = "wavenet";
 
@@ -36,11 +36,12 @@ String update_cmd;
 ESP8266WiFiMulti wifiMulti;
 
 /* Http server and updater */
-ESP8266WebServer httpServer(80);
+#define HTTP_PORT 80
+ESP8266WebServer httpServer(HTTP_PORT);
 ESP8266HTTPUpdateServer httpUpdater;
 
 /* Captive portal */
-const byte DNS_PORT = 53;
+#define DNS_PORT 53
 DNSServer dnsServer;
 
 /* Should I connect to WLAN asap? */
@@ -50,15 +51,9 @@ long lastConnectTry = 0;
 /* Current WLAN status */
 int status = WL_IDLE_STATUS;
 
-void handleRoot2() {
-  String page = "";
-  page += "<p>Chip ID: " + String(ESP.getChipId()) + "</p>";
-  page += "<p>Update: " + String(update_cmd) + "</p>";
-	httpServer.send(200, "text/html", page);
-}
-
 void setup() {
 
+  /* Wait until settled */
 	delay(1000);
 
   /* Start serial */
@@ -89,6 +84,7 @@ void setup() {
   }
 
   /* Starting http server */
+  httpServer.on("/", handleRoot);
   httpServer.on("/index.html", handleRoot);
   httpServer.on("/description.xml", HTTP_GET, [](){
     SSDP.schema(httpServer.client());
@@ -151,5 +147,6 @@ void loop() {
     t0 = millis();
   }
 
-  delay(10);
+  /* Deep sleep for 2 seconds */
+  ESP.deepSleep(2e6);
 }
